@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  client:
+    container_name: client
+    image: curlimages/curl
+    command: tail -F /dev/stdout
+
+  egress-gateway:
+    container_name: egress
+    image: envoyproxy/envoy:v1.21.0
+    volumes:
+    - ./gateway/access.log:/var/log/envoy/access.log
+    - ./gateway/envoy.yaml:/etc/envoy/envoy.yaml
+
+  corporate-proxy:
+    container_name: proxy
+    image: envoyproxy/envoy:v1.21.0
+    volumes:
+    - ./proxy/access.log:/var/log/envoy/access.log
+    - ./proxy/envoy.yaml:/etc/envoy/envoy.yaml
