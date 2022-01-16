@@ -13,7 +13,7 @@ services:
     - ./gateway/access.log:/var/log/envoy/access.log
     - ./gateway/envoy.yaml:/etc/envoy/envoy.yaml
 
-  corporate-proxy:
+  external-proxy:
     container_name: proxy
     image: envoyproxy/envoy:v1.21.0
     volumes:
