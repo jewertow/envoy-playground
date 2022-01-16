@@ -6,7 +6,7 @@ admin:
 
 static_resources:
   listeners:
-  - name: tunneling-proxy
+  - name: forward_proxy
     address:
       socket_address:
         protocol: TCP
@@ -36,7 +36,7 @@ static_resources:
                     "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.cares.v3.CaresDnsResolverConfig
                     resolvers:
                     - socket_address:
-                        address: "8.8.8.8"
+                        address: 8.8.8.8
                         port_value: 53
                     dns_resolver_options:
                       use_tcp_for_dns_lookups: true
@@ -51,17 +51,13 @@ static_resources:
               - "*"
               routes:
               - match:
-                  connect_matcher:
-                    {}
+                  connect_matcher: {}
                 route:
                   cluster: dynamic_forward_proxy_cluster
                   upgrade_configs:
                   - upgrade_type: CONNECT
-                    connect_config:
-                      {}
-          upgrade_configs:
-          - upgrade_type: CONNECT
-          stat_prefix: tunneling_proxy
+                    connect_config: {}
+          stat_prefix: forward_proxy
   clusters:
   - name: dynamic_forward_proxy_cluster
     lb_policy: CLUSTER_PROVIDED
@@ -78,7 +74,7 @@ static_resources:
               "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.cares.v3.CaresDnsResolverConfig
               resolvers:
               - socket_address:
-                  address: "8.8.8.8"
+                  address: 8.8.8.8
                   port_value: 53
               dns_resolver_options:
                 use_tcp_for_dns_lookups: true
