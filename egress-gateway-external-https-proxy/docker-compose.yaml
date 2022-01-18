@@ -12,6 +12,9 @@ services:
     volumes:
     - ./gateway/access.log:/var/log/envoy/access.log
     - ./gateway/envoy.yaml:/etc/envoy/envoy.yaml
+    - ./gateway/envoy-ca-cert.pem:/etc/pki/CA/envoy-ca-cert.pem
+    - ./gateway/envoy-cert.pem:/etc/pki/tls/certs/envoy-cert.pem
+    - ./gateway/envoy-key.pem:/etc/pki/tls/private/envoy-key.pem
 
   external-proxy:
     container_name: proxy
