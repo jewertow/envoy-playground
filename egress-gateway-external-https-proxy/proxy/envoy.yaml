@@ -58,6 +58,19 @@ static_resources:
                   - upgrade_type: CONNECT
                     connect_config: {}
           stat_prefix: forward_proxy
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+          common_tls_context:
+            tls_certificates:
+            - certificate_chain:
+                filename: /etc/pki/tls/certs/envoy-cert.pem
+              private_key:
+                filename: /etc/pki/tls/private/envoy-key.pem
+            validation_context:
+              trusted_ca:
+                filename: /etc/pki/CA/envoy-ca-cert.pem
   clusters:
   - name: dynamic_forward_proxy_cluster
     lb_policy: CLUSTER_PROVIDED
@@ -79,3 +92,11 @@ static_resources:
               dns_resolver_options:
                 use_tcp_for_dns_lookups: true
                 no_default_search_domain: true
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        common_tls_context:
+          validation_context:
+            trusted_ca:
+              filename: /etc/ssl/certs/ca-certificates.crt

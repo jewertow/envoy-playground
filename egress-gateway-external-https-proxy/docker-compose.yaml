@@ -22,3 +22,6 @@ services:
     volumes:
     - ./proxy/access.log:/var/log/envoy/access.log
     - ./proxy/envoy.yaml:/etc/envoy/envoy.yaml
+    - ./proxy/envoy-ca-cert.pem:/etc/pki/CA/envoy-ca-cert.pem
+    - ./proxy/envoy-cert.pem:/etc/pki/tls/certs/envoy-cert.pem
+    - ./proxy/envoy-key.pem:/etc/pki/tls/private/envoy-key.pem

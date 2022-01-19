@@ -81,10 +81,6 @@ static_resources:
             address:
               pipe:
                 path: "@/loopback_listener"
-    transport_socket:
-      name: envoy.transport_sockets.tls
-      typed_config:
-        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
   - name: external_proxy_cluster
     connect_timeout: 0.25s
     type: strict_dns
@@ -98,3 +94,7 @@ static_resources:
               socket_address:
                 address: external-proxy
                 port_value: 3128
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
