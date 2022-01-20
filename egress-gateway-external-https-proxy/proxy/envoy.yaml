@@ -44,9 +44,9 @@ static_resources:
           - name: envoy.filters.http.router
           http_protocol_options: {}
           route_config:
-            name: local_route
+            name: default
             virtual_hosts:
-            - name: local_service
+            - name: forward_proxy
               domains:
               - "*"
               routes:

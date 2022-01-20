@@ -8,5 +8,6 @@ docker-compose up
 
 #### How to test proxy
 ```sh
-docker exec client /bin/sh -c 'curl -v http://egress-gateway:80/ | grep -o "<title>.*</title>"'
+export PROXY_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' egress)
+docker exec -it client /bin/sh -c "curl -v --insecure --resolve www.wikipedia.org:443:$PROXY_IP https://www.wikipedia.org/ | grep -o \"<title>.*</title>\""
 ```
