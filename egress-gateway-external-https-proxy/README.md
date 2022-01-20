@@ -10,4 +10,5 @@ docker-compose up
 ```sh
 export PROXY_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' egress)
 docker exec -it client /bin/sh -c "curl -v --insecure --resolve www.wikipedia.org:443:$PROXY_IP https://www.wikipedia.org/ | grep -o \"<title>.*</title>\""
+docker exec -it client /bin/sh -c "curl -v --insecure --resolve www.google.com:443:$PROXY_IP https://www.google.com/ | grep -o \"<title>.*</title>\""
 ```

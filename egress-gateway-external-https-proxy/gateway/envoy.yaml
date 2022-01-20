@@ -14,7 +14,11 @@ static_resources:
     listener_filters:
     - name: envoy.filters.listener.tls_inspector
     filter_chains:
-    - filters:
+    - filter_chain_match:
+        transport_protocol: tls
+        server_names:
+        - "www.wikipedia.org"
+      filters:
       - name: tcp
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
@@ -28,6 +32,42 @@ static_resources:
           stat_prefix: external_proxy
           tunneling_config:
             hostname: www.wikipedia.org:443
+            headers_to_add:
+            - header:
+                key: x-sni
+                value: "%REQUESTED_SERVER_NAME%"
+              append_action: OVERWRITE_IF_EXISTS_OR_ADD
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+          common_tls_context:
+            tls_certificates:
+            - certificate_chain:
+                filename: /etc/pki/tls/certs/envoy-cert.pem
+              private_key:
+                filename: /etc/pki/tls/private/envoy-key.pem
+            validation_context:
+              trusted_ca:
+                filename: /etc/pki/CA/envoy-ca-cert.pem
+    - filter_chain_match:
+        transport_protocol: tls
+        server_names:
+        - "www.google.com"
+      filters:
+      - name: tcp
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+          access_log:
+          - name: envoy.access_loggers.file
+            typed_config:
+              "@type": "type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog"
+              path: /var/log/envoy/access.log
+              format: "[%START_TIME%] %DOWNSTREAM_REMOTE_ADDRESS% \"%REQ(:METHOD)% %UPSTREAM_HOST% [SNI: %REQUESTED_SERVER_NAME%] %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" - %RESPONSE_CODE% - %RESPONSE_FLAGS% \n"
+          cluster: external_proxy_cluster
+          stat_prefix: external_proxy
+          tunneling_config:
+            hostname: www.google.com:443
             headers_to_add:
             - header:
                 key: x-sni
