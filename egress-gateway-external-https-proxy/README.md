@@ -1,9 +1,16 @@
 # PoC of envoy egress gateway that transparently acts the role of HTTPS proxy
 
 #### How to run the demo
+##### Egress gateway based on TcpProxy
 ```sh
 ./setup-log-files.sh
-docker-compose up
+LISTENER_TYPE=tcp docker-compose up
+```
+
+##### Egress gateway based on HttpConnectionManager
+```sh
+./setup-log-files.sh
+LISTENER_TYPE=http docker-compose up
 ```
 
 #### How to test proxy
