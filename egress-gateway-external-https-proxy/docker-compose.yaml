@@ -5,6 +5,8 @@ services:
     container_name: client
     image: curlimages/curl
     command: tail -F /dev/stdout
+    cap_add:
+    - NET_ADMIN
 
   egress-gateway:
     container_name: egress
@@ -12,6 +14,10 @@ services:
     volumes:
     - ./gateway/access.log:/var/log/envoy/access.log
     - ./gateway/${LISTENER_TYPE}/envoy.yaml:/etc/envoy/envoy.yaml
+    cap_add:
+    - NET_ADMIN
+    depends_on:
+    - client
 
   external-proxy:
     container_name: proxy
@@ -22,3 +28,7 @@ services:
     - ./proxy/envoy-ca-cert.pem:/etc/pki/CA/envoy-ca-cert.pem
     - ./proxy/envoy-cert.pem:/etc/pki/tls/certs/envoy-cert.pem
     - ./proxy/envoy-key.pem:/etc/pki/tls/private/envoy-key.pem
+    cap_add:
+    - NET_ADMIN
+    depends_on:
+    - egress-gateway
