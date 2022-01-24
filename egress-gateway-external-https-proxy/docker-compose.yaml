@@ -10,9 +10,6 @@ services:
     container_name: egress
     image: envoyproxy/envoy:v1.21.0
     volumes:
-    - ./gateway/envoy-ca-cert.pem:/etc/pki/CA/envoy-ca-cert.pem
-    - ./gateway/envoy-cert.pem:/etc/pki/tls/certs/envoy-cert.pem
-    - ./gateway/envoy-key.pem:/etc/pki/tls/private/envoy-key.pem
     - ./gateway/access.log:/var/log/envoy/access.log
     - ./gateway/${LISTENER_TYPE}/envoy.yaml:/etc/envoy/envoy.yaml
 
