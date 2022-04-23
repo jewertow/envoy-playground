@@ -8,27 +8,32 @@ services:
     cap_add:
     - NET_ADMIN
 
-  egress-gateway:
-    container_name: egress
-    image: envoyproxy/envoy:v1.21.0
+  gateway:
+    container_name: gateway
+    image: envoy:auto-sni-0.1
+    ports:
+    - 443:443
     volumes:
     - ./gateway/access.log:/var/log/envoy/access.log
     - ./gateway/${LISTENER_TYPE}/envoy.yaml:/etc/envoy/envoy.yaml
+    # - ./gateway/envoy-ca-cert.pem:/etc/pki/CA/envoy-ca-cert.pem
+    - ./gateway/envoy-cert.pem:/etc/pki/tls/certs/envoy-cert.pem
+    - ./gateway/envoy-key.pem:/etc/pki/tls/private/envoy-key.pem
     cap_add:
     - NET_ADMIN
     depends_on:
     - client
 
-  external-proxy:
-    container_name: proxy
+  tunnel-proxy:
+    container_name: tunnel-proxy
     image: envoyproxy/envoy:v1.21.0
     volumes:
     - ./proxy/access.log:/var/log/envoy/access.log
     - ./proxy/envoy.yaml:/etc/envoy/envoy.yaml
-    - ./proxy/envoy-ca-cert.pem:/etc/pki/CA/envoy-ca-cert.pem
+    # - ./proxy/envoy-ca-cert.pem:/etc/pki/CA/envoy-ca-cert.pem
     - ./proxy/envoy-cert.pem:/etc/pki/tls/certs/envoy-cert.pem
     - ./proxy/envoy-key.pem:/etc/pki/tls/private/envoy-key.pem
     cap_add:
     - NET_ADMIN
     depends_on:
-    - egress-gateway
+    - gateway
