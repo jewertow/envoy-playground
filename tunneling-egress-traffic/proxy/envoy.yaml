@@ -42,6 +42,8 @@ static_resources:
                       use_tcp_for_dns_lookups: true
                       no_default_search_domain: true
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
           http_protocol_options: {}
           route_config:
             name: default
@@ -59,18 +61,15 @@ static_resources:
                     connect_config: {}
           stat_prefix: forward_proxy
       transport_socket:
-        name: envoy.transport_sockets.tls
+        name: downstream_tls
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
           common_tls_context:
             tls_certificates:
             - certificate_chain:
-                filename: /etc/pki/tls/certs/envoy-cert.pem
+                filename: /etc/pki/tls/certs/tunnel-proxy-cert.pem
               private_key:
-                filename: /etc/pki/tls/private/envoy-key.pem
-            validation_context:
-              trusted_ca:
-                filename: /etc/pki/CA/envoy-ca-cert.pem
+                filename: /etc/pki/tls/private/tunnel-proxy-key.pem
   clusters:
   - name: dynamic_forward_proxy_cluster
     lb_policy: CLUSTER_PROVIDED
@@ -92,3 +91,11 @@ static_resources:
               dns_resolver_options:
                 use_tcp_for_dns_lookups: true
                 no_default_search_domain: true
+    transport_socket:
+      name: upstream_tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        common_tls_context:
+          validation_context:
+            trusted_ca:
+              filename: /etc/ssl/certs/ca-certificates.crt

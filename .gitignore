@@ -1,2 +1,5 @@
-**/access.log
+**/*.log
 **/*.pem
+**/*.crt
+**/*.key
+

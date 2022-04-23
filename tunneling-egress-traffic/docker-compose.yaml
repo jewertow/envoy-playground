@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  client:
+    container_name: client
+    image: curlimages/curl
+    command: tail -F /dev/stdout
+    cap_add:
+    - NET_ADMIN
+
+  gateway:
+    container_name: gateway
+    image: envoyproxy/envoy:v1.23.0
+    ports:
+    - 443:443
+    volumes:
+    - ./gateway/access.log:/var/log/envoy/access.log
+    - ./gateway/tcp/envoy.yaml:/etc/envoy/envoy.yaml
+    - ./www.wikipedia.org.crt:/etc/pki/tls/certs/www.wikipedia.org-cert.pem
+    - ./www.wikipedia.org.key:/etc/pki/tls/private/www.wikipedia.org-key.pem
+    cap_add:
+    - NET_ADMIN
+    depends_on:
+    - client
+
+  tunnel-proxy:
+    container_name: tunnel-proxy
+    image: envoyproxy/envoy:v1.23.0
+    volumes:
+    - ./proxy/access.log:/var/log/envoy/access.log
+    - ./proxy/envoy.yaml:/etc/envoy/envoy.yaml
+    - ./tunnel-proxy.crt:/etc/pki/tls/certs/tunnel-proxy-cert.pem
+    - ./tunnel-proxy.key:/etc/pki/tls/private/tunnel-proxy-key.pem
+    cap_add:
+    - NET_ADMIN
+    depends_on:
+    - gateway
