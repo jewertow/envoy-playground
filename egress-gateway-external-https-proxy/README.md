@@ -1,19 +1,20 @@
-# PoC of envoy egress gateway that transparently acts the role of HTTPS proxy
+# Tunneling traffic via TcpProxy
 
-#### How to run the demo
-##### Egress gateway based on TcpProxy
+## Usage
+
+### Generate SSL certificates
 ```sh
-./setup-log-files.sh
-LISTENER_TYPE=tcp docker-compose up
+curl https://raw.githubusercontent.com/jewertow/openssl-cert-gen/master/tls.sh | SUBJECT="tunnel-proxy" sh
+curl https://raw.githubusercontent.com/jewertow/openssl-cert-gen/master/tls.sh | SUBJECT="www.wikipedia.org" sh
 ```
 
-##### Egress gateway based on HttpConnectionManager
+### Run containers
 ```sh
 ./setup-log-files.sh
-LISTENER_TYPE=http docker-compose up
+docker-compose up
 ```
 
-#### How to test proxy
+### Test connectivity
 ```sh
 export PROXY_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' gateway)
 docker exec -it client /bin/sh -c \

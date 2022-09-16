@@ -1,4 +1,6 @@
 **/access.log
 **/*.pem
+**/*.crt
+**/*.key
 
-tunneling-config-auto-sni/envoy
+tunneling-config-auto-sni/*

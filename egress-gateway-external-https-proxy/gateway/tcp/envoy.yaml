@@ -12,7 +12,9 @@ static_resources:
         address: 0.0.0.0
         port_value: 443
     listener_filters:
-    - name: envoy.filters.listener.tls_inspector
+    - name: "tls_inspector"
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
     filter_chains:
     - filter_chain_match:
         transport_protocol: tls
@@ -27,13 +29,15 @@ static_resources:
             typed_config:
               "@type": "type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog"
               path: /var/log/envoy/access.log
-              format: "[%START_TIME%] %DOWNSTREAM_REMOTE_ADDRESS% \"%REQ(:METHOD)% %UPSTREAM_HOST% [SNI: %REQUESTED_SERVER_NAME%] %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" - %RESPONSE_CODE% - %RESPONSE_FLAGS% \n"
+              format: "[%START_TIME%] DOWNSTREAM_REMOTE_ADDRESS=%DOWNSTREAM_REMOTE_ADDRESS% UPSTREAM_HOST=%UPSTREAM_HOST% DOWNSTREAM_DIRECT_REMOTE_ADDRESS=%DOWNSTREAM_DIRECT_REMOTE_ADDRESS% UPSTREAM_LOCAL_ADDRESS=%UPSTREAM_LOCAL_ADDRESS% UPSTREAM_HOST=%UPSTREAM_HOST% UPSTREAM_REMOTE_ADDRESS=%UPSTREAM_REMOTE_ADDRESS% [SNI: %REQUESTED_SERVER_NAME%] %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %REQ(test)% %PROTOCOL%\" - %RESPONSE_CODE% - %RESPONSE_FLAGS% \n"
           cluster: external_proxy_cluster
           stat_prefix: external_proxy
           tunneling_config:
-            hostname: ""
-            auto_sni:
-              port: 443
+            hostname: "%REQUESTED_SERVER_NAME%:443"
+          # tunneling_config:
+          #  hostname: ""
+          #  auto_sni:
+          #    port: 443
       # TODO: rename certificates properly for server names
       transport_socket:
         name: envoy.transport_sockets.tls
