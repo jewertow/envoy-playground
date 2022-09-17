@@ -61,7 +61,7 @@ static_resources:
                     connect_config: {}
           stat_prefix: forward_proxy
       transport_socket:
-        name: envoy.transport_sockets.tls
+        name: downstream_tls
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
           common_tls_context:
@@ -70,9 +70,6 @@ static_resources:
                 filename: /etc/pki/tls/certs/tunnel-proxy-cert.pem
               private_key:
                 filename: /etc/pki/tls/private/tunnel-proxy-key.pem
-            # validation_context:
-            #   trusted_ca:
-            #     filename: /etc/pki/CA/envoy-ca-cert.pem
   clusters:
   - name: dynamic_forward_proxy_cluster
     lb_policy: CLUSTER_PROVIDED
@@ -95,7 +92,7 @@ static_resources:
                 use_tcp_for_dns_lookups: true
                 no_default_search_domain: true
     transport_socket:
-      name: envoy.transport_sockets.tls
+      name: upstream_tls
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
         common_tls_context:

@@ -16,9 +16,8 @@ services:
     volumes:
     - ./gateway/access.log:/var/log/envoy/access.log
     - ./gateway/tcp/envoy.yaml:/etc/envoy/envoy.yaml
-    - ./envoy-cert.pem:/etc/pki/tls/certs/envoy-cert.pem
-    - ./envoy-key.pem:/etc/pki/tls/private/envoy-key.pem
-    # command: tail -F /dev/stdout
+    - ./www.wikipedia.org.crt:/etc/pki/tls/certs/www.wikipedia.org-cert.pem
+    - ./www.wikipedia.org.key:/etc/pki/tls/private/www.wikipedia.org-key.pem
     cap_add:
     - NET_ADMIN
     depends_on:

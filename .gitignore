@@ -1,6 +1,5 @@
-**/access.log
+**/*.log
 **/*.pem
 **/*.crt
 **/*.key
 
-tunneling-config-auto-sni/*
