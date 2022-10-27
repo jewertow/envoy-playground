@@ -1,21 +1,52 @@
 version: '3'
 
 services:
+
+  client-namespace:
+    container_name: client-namespace
+    image: busybox:1.35.0
+    command: sleep infinity
+    cap_add:
+    - NET_ADMIN
+    networks:
+      tunneling-demo:
+        aliases:
+        - client
+
   client:
     container_name: client
     image: redhat/ubi8:8.6
-    command: sleep 365d
+    command: sleep infinity
     cap_add:
     - NET_ADMIN
+    network_mode: "service:client-namespace"
+    depends_on:
+    - client-namespace
+
+  client-sidecar:
+    container_name: client-sidecar
+    image: envoyproxy/envoy:v1.23.0
+    cap_add:
+    - NET_ADMIN
+    network_mode: "service:client-namespace"
+    volumes:
+    - ./sidecar/envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+    - client
 
   tunnel-proxy:
     container_name: tunnel-proxy
     image: envoyproxy/envoy:v1.23.0
+    cap_add:
+    - NET_ADMIN
     volumes:
     - ./proxy/envoy.yaml:/etc/envoy/envoy.yaml
     - ./tunnel-proxy.crt:/etc/pki/tls/certs/tunnel-proxy-cert.pem
     - ./tunnel-proxy.key:/etc/pki/tls/private/tunnel-proxy-key.pem
-    cap_add:
-    - NET_ADMIN
+    networks:
+      tunneling-demo:
     depends_on:
-    - client
+    - client-sidecar
+
+networks:
+  tunneling-demo:
