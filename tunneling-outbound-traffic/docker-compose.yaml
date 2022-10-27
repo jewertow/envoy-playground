@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  client:
+    container_name: client
+    image: redhat/ubi8:8.6
+    command: sleep 365d
+    cap_add:
+    - NET_ADMIN
+
+  tunnel-proxy:
+    container_name: tunnel-proxy
+    image: envoyproxy/envoy:v1.23.0
+    volumes:
+    - ./proxy/envoy.yaml:/etc/envoy/envoy.yaml
+    - ./tunnel-proxy.crt:/etc/pki/tls/certs/tunnel-proxy-cert.pem
+    - ./tunnel-proxy.key:/etc/pki/tls/private/tunnel-proxy-key.pem
+    cap_add:
+    - NET_ADMIN
+    depends_on:
+    - client
