@@ -11,7 +11,6 @@ static_resources:
       socket_address:
         address: 0.0.0.0
         port_value: 443
-    # TLS inspector is required for extracting SNI from TLS handshake to use it later as %REQUESTED_SERVER_NAME%
     listener_filters:
     - name: tls_inspector
       typed_config:
@@ -20,7 +19,7 @@ static_resources:
     - filter_chain_match:
         transport_protocol: tls
         server_names:
-        - "www.wikipedia.org"
+        - "egress-gateway"
       filters:
       - name: tunnel_proxy_client
         typed_config:
@@ -34,7 +33,25 @@ static_resources:
           cluster: tunnel_proxy
           stat_prefix: tunneling_proxy_client
           tunneling_config:
-            hostname: "%REQUESTED_SERVER_NAME%:443"
+            hostname: "www.wikipedia.org:443"
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+          common_tls_context:
+            tls_certificates:
+            - certificate_chain:
+                filename: /etc/pki/tls/certs/egress-gateway.istio-system.svc.cluster.local.crt
+              private_key:
+                filename: /etc/pki/tls/private/egress-gateway.istio-system.svc.cluster.local.key
+            validation_context:
+              trusted_ca:
+                filename: /etc/pki/tls/certs/root-ca.crt
+              match_typed_subject_alt_names:
+              - san_type: DNS
+                matcher:
+                  exact: client.default.svc.cluster.local
+          require_client_certificate: true
   clusters:
   - name: tunnel_proxy
     connect_timeout: 0.25s

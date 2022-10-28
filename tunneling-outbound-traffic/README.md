@@ -22,7 +22,7 @@ As a result the following line should be logged:
 tunnel-proxy  | [2022-10-27T10:06:27.392Z] 172.20.0.2:37258 "CONNECT 91.198.174.192:443 - HTTP/1.1" - 200 - DC
 ```
 
-### Test tunneling through sidecar proxy
+### Test tunneling through sidecar proxy or gateway
 ```sh
 docker exec -it client /bin/sh -c \
     "curl -v --resolve www.wikipedia.org:443:127.0.0.1 https://www.wikipedia.org/ | grep -o \"<title>.*</title>\""

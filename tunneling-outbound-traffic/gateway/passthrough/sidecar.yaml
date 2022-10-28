@@ -11,13 +11,11 @@ static_resources:
       socket_address:
         address: 0.0.0.0
         port_value: 443
-    # TLS inspector is required for extracting SNI from TLS handshake to use it later as %REQUESTED_SERVER_NAME%
     listener_filters:
     - name: tls_inspector
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
     filter_chains:
-    # For restricting hostnames
     - filter_chain_match:
         transport_protocol: tls
         server_names:
@@ -31,7 +29,7 @@ static_resources:
             typed_config:
               "@type": "type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog"
               path: /dev/stdout
-              format: "[%START_TIME%] DOWNSTREAM_REMOTE_ADDRESS=%DOWNSTREAM_REMOTE_ADDRESS% UPSTREAM_HOST=%UPSTREAM_HOST% DOWNSTREAM_DIRECT_REMOTE_ADDRESS=%DOWNSTREAM_DIRECT_REMOTE_ADDRESS% UPSTREAM_LOCAL_ADDRESS=%UPSTREAM_LOCAL_ADDRESS% UPSTREAM_HOST=%UPSTREAM_HOST% UPSTREAM_REMOTE_ADDRESS=%UPSTREAM_REMOTE_ADDRESS% [SNI: %REQUESTED_SERVER_NAME%] %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %REQ(test)% %PROTOCOL%\" - %RESPONSE_CODE% - %RESPONSE_FLAGS% \n"
+              format: "[%START_TIME%] DRA=%DOWNSTREAM_REMOTE_ADDRESS% UH=%UPSTREAM_HOST% ULA=%UPSTREAM_LOCAL_ADDRESS% [SNI: %REQUESTED_SERVER_NAME%]\" - %RESPONSE_CODE% - %RESPONSE_FLAGS% \n"
           cluster: egress_gateway
           stat_prefix: outbound_tls
   clusters:
