@@ -13,7 +13,7 @@ static_resources:
         port_value: 443
     # TLS inspector is required for extracting SNI from TLS handshake to use it later as %REQUESTED_SERVER_NAME%
     listener_filters:
-    - name: tls_inspector
+    - name: envoy.filters.listener.tls_inspector
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
     filter_chains:
@@ -22,7 +22,7 @@ static_resources:
         server_names:
         - "www.wikipedia.org"
       filters:
-      - name: tunnel_proxy_client
+      - name: envoy.filters.network.tcp_proxy
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
           access_log:
@@ -31,17 +31,17 @@ static_resources:
               "@type": "type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog"
               path: /dev/stdout
               format: "[%START_TIME%] DRA=%DOWNSTREAM_REMOTE_ADDRESS% UH=%UPSTREAM_HOST% ULA=%UPSTREAM_LOCAL_ADDRESS% [SNI: %REQUESTED_SERVER_NAME%]\" - %RESPONSE_CODE% - %RESPONSE_FLAGS% \n"
-          cluster: tunnel_proxy
-          stat_prefix: tunneling_proxy_client
+          cluster: outbound|443||tunnel-proxy
+          stat_prefix: outbound|443||tunnel-proxy
           tunneling_config:
             hostname: "%REQUESTED_SERVER_NAME%:443"
   clusters:
-  - name: tunnel_proxy
+  - name: outbound|443||tunnel-proxy
     connect_timeout: 0.25s
     type: strict_dns
     lb_policy: round_robin
     load_assignment:
-      cluster_name: tunnel_proxy
+      cluster_name: outbound|443||tunnel-proxy
       endpoints:
       - lb_endpoints:
         - endpoint:
