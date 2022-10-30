@@ -4,7 +4,7 @@ services:
 
   client-namespace:
     container_name: client-namespace
-    image: busybox:1.35.0
+    image: busybox
     command: sleep infinity
     cap_add:
     - NET_ADMIN
@@ -15,7 +15,7 @@ services:
 
   client:
     container_name: client
-    image: redhat/ubi8:8.6
+    image: curlimages/curl
     command: sleep infinity
     cap_add:
     - NET_ADMIN
