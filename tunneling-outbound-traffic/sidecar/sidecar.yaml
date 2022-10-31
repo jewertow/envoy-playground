@@ -33,17 +33,17 @@ static_resources:
               "@type": "type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog"
               path: /dev/stdout
               format: "[%START_TIME%] DRA=%DOWNSTREAM_REMOTE_ADDRESS% UH=%UPSTREAM_HOST% ULA=%UPSTREAM_LOCAL_ADDRESS% [SNI=%REQUESTED_SERVER_NAME%, ORIG_DST=%DOWNSTREAM_LOCAL_ADDRESS%]\" - %RESPONSE_CODE% - %RESPONSE_FLAGS% \n"
-          cluster: outbound|443||tunnel-proxy
-          stat_prefix: outbound|443||tunnel-proxy
+          cluster: outbound|3128||tunnel-proxy
+          stat_prefix: outbound|3128||tunnel-proxy
           tunneling_config:
             hostname: "%REQUESTED_SERVER_NAME%:443"
   clusters:
-  - name: outbound|443||tunnel-proxy
+  - name: outbound|3128||tunnel-proxy
     connect_timeout: 0.25s
     type: strict_dns
     lb_policy: round_robin
     load_assignment:
-      cluster_name: outbound|443||tunnel-proxy
+      cluster_name: outbound|3128||tunnel-proxy
       endpoints:
       - lb_endpoints:
         - endpoint:
