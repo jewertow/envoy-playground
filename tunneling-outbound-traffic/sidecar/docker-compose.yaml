@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+
+  client-namespace:
+    container_name: client-namespace
+    image: busybox
+    command: sleep infinity
+    cap_add:
+    - NET_ADMIN
+    networks:
+      tunneling-demo:
+        aliases:
+        - client
+
+  client-init:
+    container_name: client-init
+    image: cloudhero/alpine-iptables
+    command: iptables -t nat -A OUTPUT -p tcp -m owner ! --uid-owner 1337 -j DNAT --to-destination 127.0.0.1
+    cap_add:
+    - NET_ADMIN
+    network_mode: "service:client-namespace"
+    depends_on:
+    - client-namespace
+
+  client:
+    container_name: client
+    image: curlimages/curl
+    command: sleep infinity
+    cap_add:
+    - NET_ADMIN
+    network_mode: "service:client-namespace"
+    depends_on:
+      client-init:
+        condition: service_completed_successfully
+
+  client-sidecar:
+    container_name: client-sidecar
+    image: envoyproxy/envoy:v1.23.0
+    cap_add:
+    - NET_ADMIN
+    user: "1337:1337"
+    network_mode: "service:client-namespace"
+    volumes:
+    - ./sidecar.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+    - client
+
+  tunnel-proxy:
+    container_name: tunnel-proxy
+    image: envoyproxy/envoy:v1.23.0
+    cap_add:
+    - NET_ADMIN
+    volumes:
+    - ../proxy/envoy.yaml:/etc/envoy/envoy.yaml
+    - ../tunnel-proxy.crt:/etc/pki/tls/certs/tunnel-proxy-cert.pem
+    - ../tunnel-proxy.key:/etc/pki/tls/private/tunnel-proxy-key.pem
+    networks:
+      tunneling-demo:
+    depends_on:
+    - client-sidecar
+
+networks:
+  tunneling-demo:
