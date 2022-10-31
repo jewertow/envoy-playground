@@ -37,7 +37,6 @@ static_resources:
                     - socket_address:
                         address: 8.8.8.8
                         port_value: 53
-                    # TODO: review these options!
                     dns_resolver_options:
                       use_tcp_for_dns_lookups: true
                       no_default_search_domain: true
@@ -89,7 +88,6 @@ static_resources:
               - socket_address:
                   address: 8.8.8.8
                   port_value: 53
-              # TODO: review these options
               dns_resolver_options:
                 use_tcp_for_dns_lookups: true
                 no_default_search_domain: true
