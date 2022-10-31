@@ -1,4 +1,6 @@
-# Tunneling traffic via TcpProxy
+# Tunneling outbound traffic
+
+This repository contains samples of tunneling TCP over HTTP as it's currently implemented in Istio for TCP and TLS services.
 
 ## Usage
 
