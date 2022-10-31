@@ -1,6 +1,7 @@
-# Tunneling outbound traffic
+# Tunneling outbound traffic to HTTP services
 
-This directory contains samples of tunneling TCP over HTTP as it's currently implemented in Istio for TCP and TLS services.
+This directory contains prototype implementation of tunneling TCP over HTTP with HttpConnectionManager
+and internal UDS listener for tunneling.
 
 ## Usage
 
@@ -34,19 +35,14 @@ For tunneling through a mutual TLS gateway:
 docker-compose -f gateway/mutual/docker-compose.yaml up
 ```
 
-### Test tunneling through sidecar proxy or gateway
+### Test tunneling with TLS origination through sidecar proxy or gateway
 ```sh
-docker exec -it client /bin/sh -c "curl -v https://www.wikipedia.org/ | grep -o \"<title>.*</title>\""
+docker exec -it client /bin/sh -c "curl -v http://www.wikipedia.org/ | grep -o \"<title>.*</title>\""
 ```
 As a result the following logs should appear:
 ```log
-client-sidecar    | [2022-10-31T10:49:17.017Z] DRA=172.22.0.2:41644 UH=172.22.0.3:443 ULA=172.22.0.2:52996 [SNI=www.wikipedia.org, ORIG_DST=91.198.174.192:443]" - 0 - -
-egress-gateway    | [2022-10-31T10:49:17.028Z] DRA=172.22.0.2:52996 UH=172.22.0.4:3128 ULA=172.22.0.3:59078 [SNI=www.wikipedia.org]" - 0 - -
-tunnel-proxy      | [2022-10-31T10:49:17.030Z] DRA=172.22.0.3:59078 "CONNECT 91.198.174.192:443 - HTTP/1.1" - 200 - DC
-```
-
-### Test tunneling via proxy without iptables and Envoy proxies
-```sh
-docker exec -it client /bin/sh -c \
-    "curl -v --proxy-insecure --proxy https://tunnel-proxy:3128 https://www.wikipedia.org/ | grep -o \"<title>.*</title>\""
+client-sidecar    | [2022-10-31T18:15:13.334Z] 172.25.0.2:53300 "GET 172.25.0.3:443 / HTTP/1.1" - 200 - -
+egress-gateway    | [2022-10-31T18:15:13.335Z] DRA=172.25.0.2:34362 UH=@/tunnel-0.0.0.0_443 ULA=- [SNI=egress-gateway]" - 0 - - 
+egress-gateway    | [2022-10-31T18:15:13.335Z] [UDS] DRA=@/tunnel-0.0.0.0_443 UH=172.25.0.4:3128 ULA=172.25.0.3:37936 [SNI=www.wikipedia.org]" - 0 - - 
+tunnel-proxy      | [2022-10-31T18:15:13.343Z] DRA=172.25.0.3:37936 "CONNECT 91.198.174.192:443 - HTTP/1.1" - 200 - DC
 ```

@@ -1,6 +1,6 @@
 # Tunneling outbound traffic
 
-This repository contains prototype implementation of tunneling TCP over HTTP with internal UDS listeners used to tunnel traffic.
+This directory contains prototype implementation of tunneling TCP over HTTP with internal UDS listeners used to tunnel traffic.
 Internal tunneling listeners solve the problem of collecting metrics per requested cluster, instead of only for tunneling proxy.
 Another advantage over the current implementation is the ability to use `%REQUESTED_SERVER_NAME%` as `tunneling_config.hostname`
 in TLS-terminated gateways (look at `gateway/mutual/gateway.yaml`) that cannot be used in the current implementation.
