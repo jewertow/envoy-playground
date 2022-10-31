@@ -1,4 +1,4 @@
-# Tunneling outbound traffic
+# Tunneling outbound traffic to TLS services
 
 This directory contains prototype implementation of tunneling TCP over HTTP with internal UDS listeners used to tunnel traffic.
 Internal tunneling listeners solve the problem of collecting metrics per requested cluster, instead of only for tunneling proxy.
