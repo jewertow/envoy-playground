@@ -4,14 +4,13 @@ services:
   client:
     container_name: client
     image: curlimages/curl
-    command: tail -F /dev/stdout
+    command: sleep infinity
 
   dynamic-forward-proxy:
     container_name: dynamic-proxy
     image: envoyproxy/envoy:v1.21.0
     volumes:
-    - ./dynamic-forward-proxy/access.log:/var/log/envoy/access.log
-    - ./dynamic-forward-proxy/envoy.yaml:/etc/envoy/envoy.yaml
-    - ./dynamic-forward-proxy/envoy-ca-cert.pem:/etc/pki/CA/envoy-ca-cert.pem
-    - ./dynamic-forward-proxy/envoy-cert.pem:/etc/pki/tls/certs/envoy-cert.pem
-    - ./dynamic-forward-proxy/envoy-key.pem:/etc/pki/tls/private/envoy-key.pem
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
+    - ./root-ca.crt:/etc/pki/CA/envoy-ca-cert.pem
+    - ./dynamic-proxy.crt:/etc/pki/tls/certs/envoy-cert.pem
+    - ./dynamic-proxy.key:/etc/pki/tls/private/envoy-key.pem
