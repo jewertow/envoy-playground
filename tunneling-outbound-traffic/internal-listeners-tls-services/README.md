@@ -49,13 +49,17 @@ client-sidecar    | [2022-10-31T10:49:17.017Z] DRA=172.22.0.2:41644 UH=172.22.0.
 egress-gateway    | [2022-10-31T10:49:17.028Z] DRA=172.22.0.2:52996 UH=172.22.0.4:3128 ULA=172.22.0.3:59078 [SNI=www.wikipedia.org]" - 0 - -
 tunnel-proxy      | [2022-10-31T10:49:17.030Z] DRA=172.22.0.3:59078 "CONNECT 91.198.174.192:443 - HTTP/1.1" - 200 - DC
 ```
+#### Get stats
+```sh
+docker exec -it client /bin/sh -c "curl localhost:9902/stats/prometheus"
+```
 
 ### Known issues
 1. Original destination is not available in subsequent listeners. How to pass it to a next listener? Is it possible to do it with dynamic metadata?
 ```log
-client-sidecar    | [2022-10-31T13:06:11.307Z] DRA=172.23.0.2:60904 UH=@/tunnel-0.0.0.0_443 ULA=- [SNI=www.wikipedia.org, ORIG_DST=91.198.174.192:443]" - 0 - -
-client-sidecar    | [2022-10-31T13:06:11.331Z] [UDS] DRA=@/tunnel-0.0.0.0_443 UH=172.23.0.3:3128 ULA=172.23.0.2:40160 [SNI=www.wikipedia.org, ORIG_DST=@/tunnel-0.0.0.0_443]" - 0 - -
-tunnel-proxy      | [2022-10-31T13:06:11.335Z] DRA=172.23.0.2:40160 "CONNECT 91.198.174.192:443 - HTTP/1.1" - 200 - DC
+tunnel-proxy      | [2023-01-07T18:02:09.595Z] DRA=172.23.0.2:54614 "CONNECT 91.198.174.192:443 - HTTP/1.1" - 200 - DC
+client-sidecar    | [2023-01-07T18:02:09.593Z] DRA=envoy://internal_client_address/ UH=172.23.0.3:3128 ULA=172.23.0.2:54614 [SNI=www.wikipedia.org, ORIG_DST=envoy://tunneling-tls-proxy-443/]" - 0 - -
+client-sidecar    | [2023-01-07T18:02:09.584Z] DRA=172.23.0.2:36452 UH=envoy://tunneling-tls-proxy-443/ ULA=envoy://internal_client_address/ [SNI=www.wikipedia.org, ORIG_DST=91.198.174.192:443]" - 0 - -
 ```
 
 ### Test tunneling via proxy without iptables and Envoy proxies

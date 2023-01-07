@@ -36,7 +36,7 @@ services:
 
   client-sidecar:
     container_name: client-sidecar
-    image: envoyproxy/envoy:v1.23.0
+    image: envoyproxy/envoy:v1.24.0
     cap_add:
     - NET_ADMIN
     user: "1337:1337"
@@ -48,7 +48,7 @@ services:
 
   tunnel-proxy:
     container_name: tunnel-proxy
-    image: envoyproxy/envoy:v1.23.0
+    image: envoyproxy/envoy:v1.24.0
     cap_add:
     - NET_ADMIN
     volumes:

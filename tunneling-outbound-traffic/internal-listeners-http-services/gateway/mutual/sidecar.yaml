@@ -6,7 +6,7 @@ admin:
 
 static_resources:
   listeners:
-  - name: "0.0.0.0_80"
+  - name: 0.0.0.0_80
     address:
       socket_address:
         address: 0.0.0.0
