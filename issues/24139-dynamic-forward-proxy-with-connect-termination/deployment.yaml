@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tunnel-proxy
+spec:
+  selector:
+    matchLabels:
+      app: tunnel-proxy
+  template:
+    metadata:
+      labels:
+        app: tunnel-proxy
+    spec:
+      containers:
+      - name: tunnel-proxy
+        image: envoyproxy/envoy:v1.24.0
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: tunnel-proxy-cfg
+          mountPath: /etc/envoy
+      volumes:
+      - name: tunnel-proxy-cfg
+        configMap:
+          name: tunnel-proxy-cfg
