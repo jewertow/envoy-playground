@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+  client:
+    container_name: client
+    image: curlimages/curl
+    command: sleep infinity
+    volumes:
+    - ./client.local.crt:/etc/pki/tls/certs/client.local.crt
+    - ./client.local.key:/etc/pki/tls/private/client.local.key
+    - ./root-ca.crt:/etc/pki/tls/certs/root-ca.crt
+
+  gateway:
+    container_name: gateway
+    image: envoyproxy/envoy:v1.29.0
+    volumes:
+    - ./gateway.yaml:/etc/envoy/envoy.yaml
+    - ./gateway.local.crt:/etc/pki/tls/certs/gateway.local.crt
+    - ./gateway.local.key:/etc/pki/tls/private/gateway.local.key
+    - ./root-ca.crt:/etc/pki/tls/certs/root-ca.crt
+    depends_on:
+    - client
+
+  server:
+    container_name: server
+    image: kong/httpbin
+    command: "gunicorn -b 0.0.0.0:8000 httpbin:app -k gevent"
