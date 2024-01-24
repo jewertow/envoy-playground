@@ -10,6 +10,8 @@ services:
     - ./client.local.crt:/etc/pki/tls/certs/client.local.crt
     - ./client.local.key:/etc/pki/tls/private/client.local.key
     - ./root-ca.crt:/etc/pki/tls/certs/root-ca.crt
+    - ./untrusted-client.local.crt:/etc/pki/tls/certs/untrusted-client.local.crt
+    - ./untrusted-client.local.key:/etc/pki/tls/private/untrusted-client.local.key
 
   gateway:
     container_name: gateway

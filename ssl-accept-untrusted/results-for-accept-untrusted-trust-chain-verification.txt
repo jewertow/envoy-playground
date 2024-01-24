@@ -1,0 +1,163 @@
+docker exec -it client /bin/sh -c "curl --insecure -v -H \"Host: httpbin\" \
+    --key /etc/pki/tls/private/client.local.key \
+    --cert /etc/pki/tls/certs/client.local.crt \
+    https://$PROXY_IP:443/headers"
+*   Trying 172.30.0.4:443...
+* Connected to 172.30.0.4 (172.30.0.4) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Request CERT (13):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Certificate (11):
+* TLSv1.3 (OUT), TLS handshake, CERT verify (15):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN, server did not agree to a protocol
+* Server certificate:
+*  subject: CN=gateway.local
+*  start date: Jan 24 16:11:54 2024 GMT
+*  expire date: Jan 23 16:11:54 2025 GMT
+*  issuer: CN=local
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+> GET /headers HTTP/1.1
+> Host: httpbin
+> User-Agent: curl/7.80.0-DEV
+> Accept: */*
+> 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< server: envoy
+< date: Wed, 24 Jan 2024 16:31:58 GMT
+< content-type: application/json
+< content-length: 153
+< access-control-allow-origin: *
+< access-control-allow-credentials: true
+< x-envoy-upstream-service-time: 2
+< 
+{
+  "headers": {
+    "Accept": "*/*", 
+    "Host": "httpbin", 
+    "User-Agent": "curl/7.80.0-DEV", 
+    "X-Envoy-Expected-Rq-Timeout-Ms": "15000"
+  }
+}
+* Connection #0 to host 172.30.0.4 left intact
+
+
+
+docker exec -it client /bin/sh -c "curl --insecure -v -H \"Host: httpbin\" \
+    --key /etc/pki/tls/private/untrusted-client.local.key \
+    --cert /etc/pki/tls/certs/untrusted-client.local.crt \
+    https://$PROXY_IP:443/headers"
+*   Trying 172.30.0.4:443...
+* Connected to 172.30.0.4 (172.30.0.4) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Request CERT (13):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Certificate (11):
+* TLSv1.3 (OUT), TLS handshake, CERT verify (15):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN, server did not agree to a protocol
+* Server certificate:
+*  subject: CN=gateway.local
+*  start date: Jan 24 16:11:54 2024 GMT
+*  expire date: Jan 23 16:11:54 2025 GMT
+*  issuer: CN=local
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+> GET /headers HTTP/1.1
+> Host: httpbin
+> User-Agent: curl/7.80.0-DEV
+> Accept: */*
+> 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< server: envoy
+< date: Wed, 24 Jan 2024 16:32:11 GMT
+< content-type: application/json
+< content-length: 153
+< access-control-allow-origin: *
+< access-control-allow-credentials: true
+< x-envoy-upstream-service-time: 1
+< 
+{
+  "headers": {
+    "Accept": "*/*", 
+    "Host": "httpbin", 
+    "User-Agent": "curl/7.80.0-DEV", 
+    "X-Envoy-Expected-Rq-Timeout-Ms": "15000"
+  }
+}
+* Connection #0 to host 172.30.0.4 left intact
+
+docker exec -it client /bin/sh -c "curl --insecure -v -H \"Host: httpbin\" https://$PROXY_IP:443/headers"
+*   Trying 172.30.0.4:443...
+* Connected to 172.30.0.4 (172.30.0.4) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Request CERT (13):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Certificate (11):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN, server did not agree to a protocol
+* Server certificate:
+*  subject: CN=gateway.local
+*  start date: Jan 24 16:11:54 2024 GMT
+*  expire date: Jan 23 16:11:54 2025 GMT
+*  issuer: CN=local
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+> GET /headers HTTP/1.1
+> Host: httpbin
+> User-Agent: curl/7.80.0-DEV
+> Accept: */*
+> 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< server: envoy
+< date: Wed, 24 Jan 2024 16:32:18 GMT
+< content-type: application/json
+< content-length: 153
+< access-control-allow-origin: *
+< access-control-allow-credentials: true
+< x-envoy-upstream-service-time: 0
+< 
+{
+  "headers": {
+    "Accept": "*/*", 
+    "Host": "httpbin", 
+    "User-Agent": "curl/7.80.0-DEV", 
+    "X-Envoy-Expected-Rq-Timeout-Ms": "15000"
+  }
+}
+* Connection #0 to host 172.30.0.4 left intact
+
