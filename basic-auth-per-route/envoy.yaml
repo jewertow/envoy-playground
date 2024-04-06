@@ -29,6 +29,7 @@ static_resources:
               users:
                 inline_string: |-
                   user:{SHA}qUqP5cyxm6YcTAhz05Hph5gvu9M=
+                  admin:{SHA}0DPiKuNIrrVmD8IUCuw1hQxNqZc=
           - name: envoy.filters.http.router
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
@@ -43,7 +44,7 @@ static_resources:
                 route: { cluster: httpbin-8000 }
                 typed_per_filter_config:
                   envoy.filters.http.basic_auth:
-                    "@type": type.googleapis.com/envoy.extensions.filters.http.basic_auth.v3.BasicAuthPerRoute
+                    "@type": type.googleapis.com/envoy.config.route.v3.FilterConfig
                     disabled: true
               - match: { prefix: "/ip" }
                 route: { cluster: httpbin-8000 }
