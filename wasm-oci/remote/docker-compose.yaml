@@ -1,0 +1,16 @@
+version: '3'
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.32.1
+    command:
+    - envoy
+    - "-c"
+    - /etc/envoy/envoy.yaml
+    - "--log-level"
+    - debug
+#    - "--component-log-level"
+#    - wasm:debug
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
