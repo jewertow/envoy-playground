@@ -12,3 +12,4 @@ services:
       - "8000:8000"
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./envoy-static:/usr/local/bin/envoy
