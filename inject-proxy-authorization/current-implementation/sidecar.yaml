@@ -1,0 +1,57 @@
+admin:
+  address:
+    socket_address:
+      address: 127.0.0.1
+      port_value: 9902
+
+static_resources:
+  listeners:
+  - name: 0.0.0.0_10000
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 10000
+    listener_filters:
+    - name: envoy.filters.listener.tls_inspector
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
+    filter_chains:
+    - filter_chain_match:
+        transport_protocol: tls
+      filters:
+      - name: envoy.filters.network.tcp_proxy
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+          access_log:
+          - name: envoy.access_loggers.file
+            typed_config:
+              "@type": "type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog"
+              path: /dev/stdout
+              format: "[%START_TIME%] DRA=%DOWNSTREAM_REMOTE_ADDRESS% UH=%UPSTREAM_HOST% ULA=%UPSTREAM_LOCAL_ADDRESS% [SNI=%REQUESTED_SERVER_NAME%]\" - %RESPONSE_CODE% - %RESPONSE_FLAGS% \n"
+          cluster: squid_3128
+          stat_prefix: squid_3128
+          tunneling_config:
+            hostname: "%REQUESTED_SERVER_NAME%:443"
+            headers_to_add:
+            - header:
+                key: "Proxy-Authorization"
+                value: Basic YWJjOjEyMw==
+  clusters:
+  - name: squid_3128
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: squid_3128
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: squid
+                port_value: 3128
+    # TODO: enable TLS in Squid
+    # transport_socket:
+    #   name: envoy.transport_sockets.tls
+    #   typed_config:
+    #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
