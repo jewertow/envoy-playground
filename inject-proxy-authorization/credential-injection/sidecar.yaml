@@ -32,14 +32,13 @@ static_resources:
           stat_prefix: squid_3128
           tunneling_config:
             hostname: "%REQUESTED_SERVER_NAME%:443"
-            credential_injector:
-              credential:
-                name: envoy.http.injected_credentials.generic
-                typed_config:
-                  "@type": type.googleapis.com/envoy.extensions.http.injected_credentials.generic.v3.Generic
-                  credential:
-                    name: proxy_authorization
-                  header: Proxy-Authorization
+            credential:
+              name: envoy.http.injected_credentials.generic
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.http.injected_credentials.generic.v3.Generic
+                credential:
+                  name: proxy_authorization
+                header: Proxy-Authorization
   clusters:
   - name: squid_3128
     connect_timeout: 0.25s
