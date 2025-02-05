@@ -21,6 +21,12 @@ services:
   sidecar:
     container_name: sidecar
     image: envoyproxy/envoy:v1.33.0
+    command:
+    - envoy
+    - "-c"
+    - /etc/envoy/envoy.yaml
+    - "--log-level"
+    - trace
     ports:
     - "10000:10000"
     volumes:
