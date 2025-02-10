@@ -32,10 +32,13 @@ static_resources:
           stat_prefix: squid_3128
           tunneling_config:
             hostname: "%REQUESTED_SERVER_NAME%:443"
-            headers_to_add:
-            - header:
-                key: "Proxy-Authorization"
-                value: Basic YWJjOjEyMw==
+            credential:
+              name: envoy.http.injected_credentials.generic
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.http.injected_credentials.generic.v3.Generic
+                credential:
+                  name: proxy_authorization
+                header: Proxy-Authorization
   clusters:
   - name: squid_3128
     connect_timeout: 0.25s
@@ -50,8 +53,8 @@ static_resources:
               socket_address:
                 address: squid
                 port_value: 3128
-    # TODO: enable TLS in Squid
-    # transport_socket:
-    #   name: envoy.transport_sockets.tls
-    #   typed_config:
-    #     "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+  secrets:
+  - name: proxy_authorization
+    generic_secret:
+      secret:
+        filename: /etc/envoy/proxy-authorization

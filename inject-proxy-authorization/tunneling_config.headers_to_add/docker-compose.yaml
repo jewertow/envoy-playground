@@ -18,10 +18,10 @@ services:
         soft: 10
         hard: 10
 
-  sidecar:
-    container_name: sidecar
+  envoy:
+    container_name: envoy
     image: envoyproxy/envoy:v1.33.0
     ports:
     - "10000:10000"
     volumes:
-    - ./sidecar.yaml:/etc/envoy/envoy.yaml
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
