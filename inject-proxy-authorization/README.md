@@ -14,6 +14,12 @@ docker-compose -f tunneling_config.headers_to_add/docker-compose.yaml up
 docker-compose -f envoy.extensions.http.injected_credentials/docker-compose.yaml up
 ```
 
+#### 3. Envoy v1.34-dev - credential injector dual filter
+
+```shell
+docker-compose -f envoy.filters.http.upstream.credential_injector/docker-compose.yaml up
+```
+
 ### Send a request:
 
 ```shell

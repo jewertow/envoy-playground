@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+
+  squid:
+    image: sameersbn/squid:3.5.27-2
+    container_name: squid
+    ports:
+    - "3128:3128"
+    volumes:
+    - "../squid.conf:/etc/squid/squid.conf"
+    - "../passwords:/etc/squid/passwd"
+    ulimits:
+      nofile:
+        soft: 1024
+        hard: 1024
+      nproc:
+        soft: 10
+        hard: 10
+
+  envoy:
+    container_name: envoy
+    image: envoyproxy/envoy:v1.33.0
+    ports:
+    - "10000:10000"
+    volumes:
+    - "./envoy.yaml:/etc/envoy/envoy.yaml"
+    - "./proxy-authorization:/etc/envoy/proxy-authorization"
+    - "../envoy-static:/usr/local/bin/envoy"
