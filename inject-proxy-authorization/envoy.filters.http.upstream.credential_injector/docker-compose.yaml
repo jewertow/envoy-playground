@@ -20,10 +20,9 @@ services:
 
   envoy:
     container_name: envoy
-    image: envoyproxy/envoy:v1.33.0
+    image: envoyproxy/envoy:contrib-debug-dev-726958228dc292f65b5acde26162a3645a99b067
     ports:
     - "10000:10000"
     volumes:
     - "./envoy.yaml:/etc/envoy/envoy.yaml"
     - "./proxy-authorization:/etc/envoy/proxy-authorization"
-    - "../envoy-static:/usr/local/bin/envoy"
