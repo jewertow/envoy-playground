@@ -1,3 +1,9 @@
+layered_runtime:
+  layers:
+  - name: base
+    static_layer:
+      envoy.reloadable_features.wasm_plugin_enable_fetching_from_oci_regisitry: true
+
 static_resources:
   listeners:
   - address:
@@ -43,57 +49,37 @@ static_resources:
                   code:
                     remote:
                       httpUri:
-                        cluster: aws_ecr
-                        timeout: 10s
-                        uri: oci://059458747586.dkr.ecr.us-east-1.amazonaws.com/jewertow/envoy-wasm-http-filter:0.1
+                        cluster: dfp_cluster
+                        timeout: 1s
+                        uri: oci://${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/jewertow/envoy-wasm-http-filter:0.1
                       sha256: 79c9f85128bb0177b6511afa85d587224efded376ac0ef76df56595f1e6315c0
-                  basic_credentials:
-                    user: AWS
-                    password:
-                      name: ecr-password
-
+                  image_pull_secret:
+                    name: ecr-password
           - name: envoy.filters.http.router
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
-  - name: aws_ecr
-    type: strict_dns
-    lb_policy: round_robin
-    dns_lookup_family: V4_ONLY
-    load_assignment:
-      cluster_name: aws_ecr
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: 059458747586.dkr.ecr.us-east-1.amazonaws.com
-                port_value: 443
+  - name: dfp_cluster
+    lb_policy: CLUSTER_PROVIDED
+    cluster_type:
+      name: envoy.clusters.dynamic_forward_proxy
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.clusters.dynamic_forward_proxy.v3.ClusterConfig
+        dns_cache_config:
+          name: dynamic_forward_proxy_cache_config
+          dns_lookup_family: V4_ONLY
     transport_socket:
       name: envoy.transport_sockets.tls
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-  - name: oci_registry_blob_redirect_location
-    type: strict_dns
-    lb_policy: round_robin
-    dns_lookup_family: V4_ONLY
-    load_assignment:
-      cluster_name: aws_ecr
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: prod-us-east-1-starport-layer-bucket.s3.us-east-1.amazonaws.com
-                port_value: 443
-    transport_socket:
-      name: envoy.transport_sockets.tls
-      typed_config:
-        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        common_tls_context:
+          validation_context:
+            trusted_ca:
+              filename: /etc/pki/tls/certs/ca-bundle.crt
 
   secrets:
   - name: ecr-password
     generic_secret:
       secret:
-        filename: /tmp/aws-passwd.txt
+        filename: /tmp/image-pull-secret.json
