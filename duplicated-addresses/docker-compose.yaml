@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  server:
+    container_name: server
+    image: envoyproxy/envoy:v1.36.3
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./certs:/etc/envoy/certs
+    ports:
+      - "10000:10000"
+      - "10443:10443"
+
+  gateway:
+    container_name: gateway
+    image: envoyproxy/envoy:v1.36.3
+    volumes:
+      - ./gateway.yaml:/etc/envoy/envoy.yaml
+      - ./certs:/etc/envoy/certs
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+
+  client:
+    container_name: client
+    image: curlimages/curl
+    volumes:
+      - ./certs:/certs
+    command: sleep infinity
