@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  envoy:
+    container_name: envoy-static-response
+    image: envoyproxy/envoy:v1.36.3
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./certs:/etc/envoy/certs
+    ports:
+      - "10000:10000"
+      - "10443:10443"
+
+  client:
+    container_name: client
+    image: curlimages/curl
+    volumes:
+      - ./certs:/certs
+    command: sleep infinity
