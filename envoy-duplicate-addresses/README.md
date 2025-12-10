@@ -39,12 +39,22 @@ docker compose up
 
 ## Testing
 
+### Gateway (port 8080)
+
+From the client container:
+
+```bash
+docker exec -it client curl http://gateway:8080
+```
+
+This will round-robin between the two endpoints, each connecting to the backend server with different SNI values.
+
 ### HTTP (port 10000)
 
 From the client container:
 
 ```bash
-docker exec -it client curl http://envoy:10000
+docker exec -it client curl http://server:10000
 ```
 
 ### HTTPS with specific SNI (port 10443)
@@ -52,7 +62,7 @@ docker exec -it client curl http://envoy:10000
 The HTTPS listener uses SNI-based filter chain matching. You can test different filter chains by specifying different SNI values.
 
 ```bash
-SRV_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' envoy-static-response)
+SRV_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' server)
 ```
 
 Test the srv1.example.com filter chain:
@@ -70,5 +80,5 @@ docker exec -it client curl -vk --cacert /certs/ca.crt --resolve srv2.example.co
 Test with a different SNI to hit the fallback filter chain:
 
 ```bash
-docker exec -it client curl -vk --cacert /certs/ca.crt https://envoy:10443
+docker exec -it client curl -vk --cacert /certs/ca.crt https://server:10443
 ```
